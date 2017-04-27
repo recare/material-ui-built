@@ -112,9 +112,7 @@ var CalendarYear = function (_Component) {
             selected: selected,
             year: year,
             utils: utils
-          }, selectedProps, {
-            className: 'yearButton'
-          }),
+          }, selectedProps),
           yearFormated
         );
 

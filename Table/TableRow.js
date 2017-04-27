@@ -111,23 +111,17 @@ var TableRow = function (_Component) {
   (0, _createClass3.default)(TableRow, [{
     key: 'onRowClick',
     value: function onRowClick(event) {
-      if (this.props.selectable && this.props.onRowClick) {
-        this.props.onRowClick(event, this.props.rowNumber);
-      }
+      if (this.props.selectable && this.props.onRowClick) this.props.onRowClick(event, this.props.rowNumber);
     }
   }, {
     key: 'onRowHover',
     value: function onRowHover(event) {
-      if (this.props.onRowHover) {
-        this.props.onRowHover(event, this.props.rowNumber);
-      }
+      if (this.props.onRowHover) this.props.onRowHover(event, this.props.rowNumber);
     }
   }, {
     key: 'onRowHoverExit',
     value: function onRowHoverExit(event) {
-      if (this.props.onRowHoverExit) {
-        this.props.onRowHoverExit(event, this.props.rowNumber);
-      }
+      if (this.props.onRowHoverExit) this.props.onRowHoverExit(event, this.props.rowNumber);
     }
   }, {
     key: 'render',
@@ -187,6 +181,7 @@ TableRow.defaultProps = {
   hoverable: false,
   hovered: false,
   selectable: true,
+  selected: false,
   striped: false
 };
 TableRow.contextTypes = {

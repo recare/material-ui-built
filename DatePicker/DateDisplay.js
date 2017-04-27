@@ -197,7 +197,7 @@ var DateDisplay = function (_Component) {
           { style: styles.year, direction: this.state.transitionDirection },
           _react2.default.createElement(
             'div',
-            { key: year, style: styles.yearTitle, onTouchTap: this.handleTouchTapYear },
+            { key: year, name: 'yearButton', style: styles.yearTitle, onTouchTap: this.handleTouchTapYear },
             year
           )
         ),

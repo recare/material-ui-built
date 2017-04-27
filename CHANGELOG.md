@@ -1,11 +1,12 @@
 ## HEAD
 
 ## 0.17.4
+
 ###### _Apr 14, 2017_
 
 Big thanks to the 5 contributors who made this release possible.
-Following [React's announcement](https://facebook.github.io/react/blog/2017/04/07/react-v15.5.0.html) that includes the deprecation of some pattern, we have updated the codebase in order to support the latest v15.5.4 release of React.
-Thanks @rsolomon for taking care of it!
+Following [React's announcement](https://facebook.github.io/react/blog/2017/04/07/react-v15.5.0.html) that includes the deprecation of some pattern.
+We have updated the codebase in order to support the latest v15.5.4 release of React.
 
 ##### Component Fixes / Enhancements
 
@@ -15,9 +16,10 @@ Thanks @rsolomon for taking care of it!
 
 #### Core
 
-- [react] Use React 15.5 and prop-types lib (#6577) @rsolomon
+- [react] Use React 15.5 and prop-types lib #6577
 
 ## 0.17.3
+
 ###### _Apr 10, 2017_
 
 ##### Component Fixes / Enhancements
@@ -26,6 +28,7 @@ Thanks @rsolomon for taking care of it!
 - [DropDownMenu] Fix the position regression (8829a9d78abedca5de80617448cb99968650c30e) @oliviertassinari
 
 ## 0.17.2
+
 ###### _Apr 9, 2017_
 
 Big thanks to the 21 contributors who made this release possible.
@@ -66,6 +69,7 @@ The latest release of `inline-style-prefixer` is introducing **significant** [pe
 - [npm] Upgrade dependencies (#6343) @oliviertassinari
 
 ## 0.17.1
+
 ###### _Mar 12, 2017_
 
 Big thanks to the 20 contributors who made this release possible.

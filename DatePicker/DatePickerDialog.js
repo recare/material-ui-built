@@ -220,7 +220,6 @@ var DatePickerDialog = function (_Component) {
 }(_react.Component);
 
 DatePickerDialog.defaultProps = {
-  className: 'datePicker',
   DateTimeFormat: _dateUtils.dateTimeFormat,
   cancelLabel: 'Cancel',
   container: 'dialog',
@@ -235,7 +234,6 @@ DatePickerDialog.propTypes = process.env.NODE_ENV !== "production" ? {
   animation: _propTypes2.default.func,
   autoOk: _propTypes2.default.bool,
   cancelLabel: _propTypes2.default.node,
-  className: _propTypes2.default.className,
   container: _propTypes2.default.oneOf(['dialog', 'inline']),
   containerStyle: _propTypes2.default.object,
   disableYearSelection: _propTypes2.default.bool,

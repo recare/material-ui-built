@@ -144,34 +144,24 @@ var AutoComplete = function (_Component) {
       event.preventDefault();
     }, _this.handleItemTouchTap = function (event, child) {
       var dataSource = _this.props.dataSource;
+
       var index = parseInt(child.key, 10);
       var chosenRequest = dataSource[index];
       var searchText = _this.chosenRequestText(chosenRequest);
 
-      var updateInput = function updateInput() {
-        return _this.props.onUpdateInput(searchText, _this.props.dataSource, {
+      _this.setState({
+        searchText: searchText
+      }, function () {
+        _this.props.onUpdateInput(searchText, _this.props.dataSource, {
           source: 'touchTap'
         });
-      };
-      _this.timerTouchTapCloseId = function () {
-        return setTimeout(function () {
+
+        _this.timerTouchTapCloseId = setTimeout(function () {
           _this.timerTouchTapCloseId = null;
           _this.close();
           _this.props.onNewRequest(chosenRequest, index);
         }, _this.props.menuCloseDelay);
-      };
-
-      if (typeof _this.props.searchText !== 'undefined') {
-        updateInput();
-        _this.timerTouchTapCloseId();
-      } else {
-        _this.setState({
-          searchText: searchText
-        }, function () {
-          updateInput();
-          _this.timerTouchTapCloseId();
-        });
-      }
+      });
     }, _this.chosenRequestText = function (chosenRequest) {
       if (typeof chosenRequest === 'string') {
         return chosenRequest;
@@ -260,7 +250,7 @@ var AutoComplete = function (_Component) {
       this.requestsList = [];
       this.setState({
         open: this.props.open,
-        searchText: this.props.searchText || ''
+        searchText: this.props.searchText
       });
       this.timerTouchTapCloseId = null;
     }
@@ -430,6 +420,8 @@ var AutoComplete = function (_Component) {
         _react2.default.createElement(_TextField2.default, (0, _extends3.default)({
           ref: 'searchTextField',
           autoComplete: 'off',
+          value: searchText,
+          onChange: this.handleChange,
           onBlur: this.handleBlur,
           onFocus: this.handleFocus,
           onKeyDown: this.handleKeyDown,
@@ -439,12 +431,7 @@ var AutoComplete = function (_Component) {
           multiLine: false,
           errorStyle: errorStyle,
           style: textFieldStyle
-        }, other, {
-          // value and onChange are idiomatic properties often leaked.
-          // We prevent their overrides in order to reduce potential bugs.
-          value: searchText,
-          onChange: this.handleChange
-        })),
+        }, other)),
         _react2.default.createElement(
           _Popover2.default,
           (0, _extends3.default)({
@@ -486,6 +473,7 @@ AutoComplete.defaultProps = {
   openOnFocus: false,
   onUpdateInput: function onUpdateInput() {},
   onNewRequest: function onNewRequest() {},
+  searchText: '',
   menuCloseDelay: 300,
   targetOrigin: {
     vertical: 'top',

@@ -4,9 +4,9 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _objectWithoutProperties2 = require('babel-runtime/helpers/objectWithoutProperties');
+var _getIterator2 = require('babel-runtime/core-js/get-iterator');
 
-var _objectWithoutProperties3 = _interopRequireDefault(_objectWithoutProperties2);
+var _getIterator3 = _interopRequireDefault(_getIterator2);
 
 var _toConsumableArray2 = require('babel-runtime/helpers/toConsumableArray');
 
@@ -82,12 +82,13 @@ var TableBody = function (_Component) {
 
     return _ret = (_temp = (_this = (0, _possibleConstructorReturn3.default)(this, (_ref = TableBody.__proto__ || (0, _getPrototypeOf2.default)(TableBody)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
       selectedRows: []
-    }, _this.isControlled = false, _this.handleClickAway = function () {
-      if (_this.props.deselectOnClickaway && _this.state.selectedRows.length > 0) {
-        var selectedRows = [];
-        _this.setState({ selectedRows: selectedRows });
+    }, _this.handleClickAway = function () {
+      if (_this.props.deselectOnClickaway && _this.state.selectedRows.length) {
+        _this.setState({
+          selectedRows: []
+        });
         if (_this.props.onRowSelection) {
-          _this.props.onRowSelection(selectedRows);
+          _this.props.onRowSelection([]);
         }
       }
     }, _this.onRowClick = function (event, rowNumber) {
@@ -127,9 +128,7 @@ var TableBody = function (_Component) {
   (0, _createClass3.default)(TableBody, [{
     key: 'componentWillMount',
     value: function componentWillMount() {
-      this.setState({
-        selectedRows: this.getSelectedRows(this.props)
-      });
+      this.setState({ selectedRows: this.calculatePreselectedRows(this.props) });
     }
   }, {
     key: 'componentWillReceiveProps',
@@ -139,13 +138,12 @@ var TableBody = function (_Component) {
           this.setState({
             selectedRows: []
           });
-          return;
+        } else {
+          this.setState({
+            selectedRows: this.calculatePreselectedRows(nextProps)
+          });
         }
       }
-
-      this.setState({
-        selectedRows: this.getSelectedRows(nextProps)
-      });
     }
   }, {
     key: 'createRows',
@@ -193,44 +191,41 @@ var TableBody = function (_Component) {
         return null;
       }
 
-      var name = rowProps.rowNumber + '-cb';
+      var key = rowProps.rowNumber + '-cb';
       var disabled = !this.props.selectable;
+      var checkbox = _react2.default.createElement(_Checkbox2.default, {
+        ref: 'rowSelectCB',
+        name: key,
+        value: 'selected',
+        disabled: disabled,
+        checked: rowProps.selected
+      });
 
       return _react2.default.createElement(
         _TableRowColumn2.default,
         {
-          key: name,
+          key: key,
           columnNumber: 0,
           style: {
             width: 24,
             cursor: disabled ? 'not-allowed' : 'inherit'
           }
         },
-        _react2.default.createElement(_Checkbox2.default, {
-          name: name,
-          value: 'selected',
-          disabled: disabled,
-          checked: rowProps.selected
-        })
+        checkbox
       );
     }
   }, {
-    key: 'getSelectedRows',
-    value: function getSelectedRows(props) {
-      var _this3 = this;
-
-      var selectedRows = [];
+    key: 'calculatePreselectedRows',
+    value: function calculatePreselectedRows(props) {
+      // Determine what rows are 'pre-selected'.
+      var preSelectedRows = [];
 
       if (props.selectable && props.preScanRows) {
         var index = 0;
         _react2.default.Children.forEach(props.children, function (child) {
           if (_react2.default.isValidElement(child)) {
-            if (child.props.selected !== undefined) {
-              _this3.isControlled = true;
-            }
-
-            if (child.props.selected && (selectedRows.length === 0 || props.multiSelectable)) {
-              selectedRows.push(index);
+            if (child.props.selected && (preSelectedRows.length === 0 || props.multiSelectable)) {
+              preSelectedRows.push(index);
             }
 
             index++;
@@ -238,30 +233,26 @@ var TableBody = function (_Component) {
         });
       }
 
-      return selectedRows;
+      return preSelectedRows;
     }
   }, {
     key: 'isRowSelected',
     value: function isRowSelected(rowNumber) {
-      var _this4 = this;
-
       if (this.props.allRowsSelected) {
         return true;
       }
 
-      return this.state.selectedRows.some(function (row) {
-        if ((typeof row === 'undefined' ? 'undefined' : (0, _typeof3.default)(row)) === 'object') {
-          if (_this4.isValueInRange(rowNumber, row)) {
-            return true;
-          }
-        } else {
-          if (row === rowNumber) {
-            return true;
-          }
-        }
+      for (var i = 0; i < this.state.selectedRows.length; i++) {
+        var selection = this.state.selectedRows[i];
 
-        return false;
-      });
+        if ((typeof selection === 'undefined' ? 'undefined' : (0, _typeof3.default)(selection)) === 'object') {
+          if (this.isValueInRange(rowNumber, selection)) return true;
+        } else {
+          if (selection === rowNumber) return true;
+        }
+      }
+
+      return false;
     }
   }, {
     key: 'isValueInRange',
@@ -277,19 +268,16 @@ var TableBody = function (_Component) {
   }, {
     key: 'processRowSelection',
     value: function processRowSelection(event, rowNumber) {
-      var selectedRows = [].concat((0, _toConsumableArray3.default)(this.state.selectedRows));
+      var selectedRows = this.state.selectedRows;
 
-      if (event.shiftKey && this.props.multiSelectable && selectedRows.length > 0) {
+      if (event.shiftKey && this.props.multiSelectable && selectedRows.length) {
         var lastIndex = selectedRows.length - 1;
         var lastSelection = selectedRows[lastIndex];
 
         if ((typeof lastSelection === 'undefined' ? 'undefined' : (0, _typeof3.default)(lastSelection)) === 'object') {
           lastSelection.end = rowNumber;
         } else {
-          selectedRows.splice(lastIndex, 1, {
-            start: lastSelection,
-            end: rowNumber
-          });
+          selectedRows.splice(lastIndex, 1, { start: lastSelection, end: rowNumber });
         }
       } else if ((event.ctrlKey && !event.metaKey || event.metaKey && !event.ctrlKey) && this.props.multiSelectable) {
         var idx = selectedRows.indexOf(rowNumber);
@@ -320,13 +308,8 @@ var TableBody = function (_Component) {
         }
       }
 
-      if (!this.isControlled) {
-        this.setState({ selectedRows: selectedRows });
-      }
-
-      if (this.props.onRowSelection) {
-        this.props.onRowSelection(this.flattenRanges(selectedRows));
-      }
+      this.setState({ selectedRows: selectedRows });
+      if (this.props.onRowSelection) this.props.onRowSelection(this.flattenRanges(selectedRows));
     }
   }, {
     key: 'splitRange',
@@ -358,18 +341,38 @@ var TableBody = function (_Component) {
   }, {
     key: 'flattenRanges',
     value: function flattenRanges(selectedRows) {
-      var _this5 = this;
+      var rows = [];
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
 
-      return selectedRows.reduce(function (rows, row) {
-        if ((typeof row === 'undefined' ? 'undefined' : (0, _typeof3.default)(row)) === 'object') {
-          var values = _this5.genRangeOfValues(row.end, row.start - row.end);
-          rows.push.apply(rows, [row.end].concat((0, _toConsumableArray3.default)(values)));
-        } else {
-          rows.push(row);
+      try {
+        for (var _iterator = (0, _getIterator3.default)(selectedRows), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var selection = _step.value;
+
+          if ((typeof selection === 'undefined' ? 'undefined' : (0, _typeof3.default)(selection)) === 'object') {
+            var values = this.genRangeOfValues(selection.end, selection.start - selection.end);
+            rows.push.apply(rows, [selection.end].concat((0, _toConsumableArray3.default)(values)));
+          } else {
+            rows.push(selection);
+          }
         }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
 
-        return rows;
-      }, []).sort();
+      return rows.sort();
     }
   }, {
     key: 'getColumnId',
@@ -385,22 +388,8 @@ var TableBody = function (_Component) {
     key: 'render',
     value: function render() {
       var _props = this.props,
-          style = _props.style,
-          allRowsSelected = _props.allRowsSelected,
-          multiSelectable = _props.multiSelectable,
-          onCellClick = _props.onCellClick,
-          onCellHover = _props.onCellHover,
-          onCellHoverExit = _props.onCellHoverExit,
-          onRowHover = _props.onRowHover,
-          onRowHoverExit = _props.onRowHoverExit,
-          onRowSelection = _props.onRowSelection,
-          selectable = _props.selectable,
-          deselectOnClickaway = _props.deselectOnClickaway,
-          showRowHover = _props.showRowHover,
-          stripedRows = _props.stripedRows,
-          displayRowCheckbox = _props.displayRowCheckbox,
-          preScanRows = _props.preScanRows,
-          other = (0, _objectWithoutProperties3.default)(_props, ['style', 'allRowsSelected', 'multiSelectable', 'onCellClick', 'onCellHover', 'onCellHoverExit', 'onRowHover', 'onRowHoverExit', 'onRowSelection', 'selectable', 'deselectOnClickaway', 'showRowHover', 'stripedRows', 'displayRowCheckbox', 'preScanRows']);
+          className = _props.className,
+          style = _props.style;
       var prepareStyles = this.context.muiTheme.prepareStyles;
 
 
@@ -409,7 +398,7 @@ var TableBody = function (_Component) {
         { onClickAway: this.handleClickAway },
         _react2.default.createElement(
           'tbody',
-          (0, _extends3.default)({ style: prepareStyles((0, _simpleAssign2.default)({}, style)) }, other),
+          { className: className, style: prepareStyles((0, _simpleAssign2.default)({}, style)) },
           this.createRows()
         )
       );
@@ -496,7 +485,7 @@ TableBody.propTypes = process.env.NODE_ENV !== "production" ? {
   /**
    * @ignore
    * Called when a row is selected. selectedRows is an
-   * array of all row selections. If all rows have been selected,
+   * array of all row selections. IF all rows have been selected,
    * the string "all" will be returned instead to indicate that
    * all rows have been selected.
    */

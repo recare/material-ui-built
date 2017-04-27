@@ -371,7 +371,7 @@ var Calendar = function (_Component) {
         }),
         _react2.default.createElement(
           'div',
-          { style: prepareStyles(styles.calendar) },
+          { name: 'datePicker', style: prepareStyles(styles.calendar) },
           this.state.displayMonthDay && _react2.default.createElement(
             'div',
             { style: prepareStyles(styles.calendarContainer) },

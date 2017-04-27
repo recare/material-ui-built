@@ -96,13 +96,8 @@ var Table = function (_Component) {
     }, _this.onRowHoverExit = function (rowNumber) {
       if (_this.props.onRowHoverExit) _this.props.onRowHoverExit(rowNumber);
     }, _this.onRowSelection = function (selectedRows) {
-      if (_this.state.allRowsSelected) {
-        _this.setState({ allRowsSelected: false });
-      }
-
-      if (_this.props.onRowSelection) {
-        _this.props.onRowSelection(selectedRows);
-      }
+      if (_this.state.allRowsSelected) _this.setState({ allRowsSelected: false });
+      if (_this.props.onRowSelection) _this.props.onRowSelection(selectedRows);
     }, _this.onSelectAll = function () {
       if (_this.props.onRowSelection) {
         if (!_this.state.allRowsSelected) {
